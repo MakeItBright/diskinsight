@@ -2,7 +2,13 @@
 //  AppDelegate.swift
 //  diskinsight
 //
-//  Created by Yuri Breslavets on 3/15/25.
+//  Created by Juri Breslauer on 3/15/25.
 //
 
-import Foundation
+import Cocoa
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.setActivationPolicy(.accessory)
+    }
+}

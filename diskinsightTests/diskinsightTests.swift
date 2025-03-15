@@ -2,7 +2,7 @@
 //  diskinsightTests.swift
 //  diskinsightTests
 //
-//  Created by Yuri Breslavets on 3/13/25.
+//  Created by Juri Breslauer on 3/13/25.
 //
 
 import Testing

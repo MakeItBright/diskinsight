@@ -8,38 +8,62 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = DiskInfoFetcher()
+    @StateObject private var viewModel = DiskInfoFetcher() // ViewModel for fetching disk info
 
     var body: some View {
-            VStack(alignment: .leading, spacing: 20) {
-                Text("DiskInsight")
-                    .font(.title2)
-                    .bold()
-                
+        VStack(alignment: .leading, spacing: 10) {
+            // App Title
+            Text("Disk Usage Overview")
+                .font(.title2)
+                .bold()
+                .padding(.top)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            // List of Disk Info
+            if viewModel.isLoading {
+                VStack {
+                        Spacer() // Pushes content down
+                        ProgressView("Loading Disk Info...")
+                            .padding()
+                            .scaleEffect(1.2) // Slightly larger for visibility
+                        Spacer() // Pushes content up
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Expands to center
+            } else if let error = viewModel.error {
+                // Error Message
+                Text("❌ Error: \(error.localizedDescription)")
+                    .foregroundColor(.red)
+                    .padding()
+            } else {
+                List(viewModel.diskInfos) { info in
+                    DiskInfoRow(info: info)
+                        .padding(.vertical, 5)
+                }
+                .frame(height: 200) // Limit height to prevent overflow
             }
-            List(viewModel.diskInfos) { disk in
-                        VStack(alignment: .leading) {
-                            Text("📂 \(disk.name)").font(.headline)
-                            Text("Общий размер: \(disk.totalSize)")
-                            Text("Использовано: \(disk.usedSize) (\(disk.usagePercentage))")
-                            Text("Свободно: \(disk.availableSize)").foregroundColor(.green)
-                        }
-                        .padding()
-                    }
-                    .navigationTitle("Анализ Диска")
-                    .toolbar {
-                        Button("🔄 Обновить") {
-                            viewModel.loadDiskInfo()
-                        }
-                    }
-                    .onAppear {
-                        viewModel.loadDiskInfo()
-                    }
-        
+           
+            // Refresh Button
+            HStack {
+                Spacer()
+                Button(action: {
+                    viewModel.loadDiskInfo()
+                }) {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                        .font(.headline)
+                }
+                .buttonStyle(.borderedProminent)
+                Spacer()
+            }
+            .padding(.bottom)
+        }
+        .padding()
+        .onAppear {
+            viewModel.loadDiskInfo()
+        }
     }
 }
 
 #Preview {
     ContentView()
-        .frame(width: 300)
+        .frame(width: 350, height: 400)
 }

@@ -21,17 +21,20 @@ class DiskInfoFetcher: ObservableObject {
     @Published private(set) var diskInfos: [FormattedDiskInfo] = [] // Holds parsed disk info
     @Published private(set) var isLoading: Bool = false // Indicates whether data is being fetched
     @Published private(set) var error: Error? // Stores any encountered error
+                        
+    @Published private(set) var totalDiskSpace: String? /// Store total disk space as a published property
 
     /// Loads disk information asynchronously
     @MainActor
     func loadDiskInfo() {
         isLoading = true // Start loading indicator
-
+        
         Task {
             do {
                 let fetchedDiskInfos = try await getDiskInfo()
                 DispatchQueue.main.async {
                     self.diskInfos = fetchedDiskInfos
+                    self.totalDiskSpace = fetchedDiskInfos.first?.formattedTotalSize
                     self.isLoading = false
                 }
             } catch {

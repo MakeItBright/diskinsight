@@ -19,11 +19,18 @@ struct ContentView: View {
                 .padding(.top)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
+            // Display Total Disk Space
+            if let totalDiskSize = viewModel.totalDiskSpace {
+                Text("Your total disk space: \(totalDiskSize)")
+                    .font(.headline)
+                    .foregroundColor(Color.gray)
+                    .padding(.bottom, 5)
+            }
             // List of Disk Info
             if viewModel.isLoading {
                 VStack {
                         Spacer() // Pushes content down
-                        ProgressView("Loading Disk Info...")
+                        ProgressView("Analyzing disk space...")
                             .padding()
                             .scaleEffect(1.2) // Slightly larger for visibility
                         Spacer() // Pushes content up
@@ -35,11 +42,16 @@ struct ContentView: View {
                     .foregroundColor(.red)
                     .padding()
             } else {
+               
+
                 List(viewModel.diskInfos) { info in
                     DiskInfoRow(info: info)
                         .padding(.vertical, 5)
+                        .listRowSeparator(.hidden)
                 }
-                .frame(height: 200) // Limit height to prevent overflow
+                .listStyle(.plain)
+//                .scrollContentBackground(.hidden)
+                .frame(height: 160) // Limit height to prevent overflow
             }
            
             // Refresh Button
@@ -65,5 +77,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .frame(width: 350, height: 400)
+        .frame(width: 350, height: 300)
 }
